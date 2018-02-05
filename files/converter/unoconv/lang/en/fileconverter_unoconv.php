@@ -36,3 +36,6 @@ $string['test_unoconvnotestfile'] = 'The test document to be coverted into a PDF
 $string['test_unoconvnotexecutable'] = 'The unoconv path points to a file that is not executable';
 $string['test_unoconvok'] = 'The unoconv path appears to be properly configured.';
 $string['test_unoconvversionnotsupported'] = 'The version of unoconv you have installed is not supported.';
+$string['unoconvtimeout'] = 'Enable unoconv timeout';
+$string['unoconvtimeout_help'] = 'Timeout for unoconv process in seconds. Only applies to Linux systems.';
+$string['unoconvtimeout_default'] = 'None';

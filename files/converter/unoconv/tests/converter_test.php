@@ -116,7 +116,43 @@ class fileconverter_unoconv_converter_testcase extends advanced_testcase {
 
         $this->assertEquals($status, $result->status);
     }
+    /**
+     * Tests for the start_document_conversion function.
+     */
+    public function test_bad_document_conversion() {
+        GLOBAL $CFG;
+        $this->resetAfterTest();
 
+        $this->require_unoconv();
+        if (empty($CFG->unoconvtimeout)) {
+            $CFG->unoconvtimeout = '10';
+        }
+
+        // Mock the file to be converted.
+        $filerecord = [
+            'contextid' => context_system::instance()->id,
+            'component' => 'test',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => 'test2.xlsx',
+        ];
+        $fs = get_file_storage();
+        $source = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'test.xlsx';
+        $testfile = $fs->create_file_from_pathname($filerecord, $source);
+
+        $converter = $this->get_testable_mock();
+        $conversion = new \core_files\conversion(0, (object) [
+            'targetformat' => 'pdf',
+        ]);
+        $conversion->set_sourcefile($testfile);
+        $conversion->create();
+
+        // Convert the document.
+        $converter->start_document_conversion($conversion);
+        $result = $conversion->get_destfile();
+        $this->assertFalse($result);
+    }
     /**
      * Provider for test_unoconv_path.
      *
