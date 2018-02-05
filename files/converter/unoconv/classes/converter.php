@@ -124,7 +124,24 @@ class converter implements \core_files\converter_interface {
         $newtmpfile = pathinfo($filename, PATHINFO_FILENAME) . '.' . $format;
         $newtmpfile = $uniqdir . '/' . clean_param($newtmpfile, PARAM_FILE);
 
-        $cmd = escapeshellcmd(trim($CFG->pathtounoconv)) . ' ' .
+        // MDL-60481 - Added option to timeout UNOCONV process.
+
+        $timeout = 0;
+        if (!empty($CFG->unoconvtimeout)) {
+            $timeout = $CFG->unoconvtimeout;
+        }
+        $timeoutcmd = '';
+        $verbose = '';
+        $opsys = PHP_OS;
+        if (($opsys == 'Linux') || ($opsys == 'FreeBSD')) {
+            if ($timeout > 0) {
+                $timeoutcmd = "timeout ".$timeout."s";
+                $verbose = " -v ";
+            }
+        }
+
+        $cmd = escapeshellcmd($timeoutcmd) . ' ' .
+               escapeshellcmd(trim($CFG->pathtounoconv)) . ' ' . $verbose .
                escapeshellarg('-f') . ' ' .
                escapeshellarg($format) . ' ' .
                escapeshellarg('-o') . ' ' .

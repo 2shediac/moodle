@@ -31,6 +31,24 @@ $settings->add(new admin_setting_configexecutable('pathtounoconv',
         '/usr/bin/unoconv')
     );
 
+$options = array(
+    0 => get_string('unoconvtimeout_default', 'fileconverter_unoconv'),
+    30 => '30',
+    60 => '60',
+    120 => '120',
+    180 => '180',
+    240 => '240',
+    300 => '300',
+    360 => '360',
+    420 => '420',
+    480 => '480',
+    540 => '540',
+    600 => '600'
+);
+
+$settings->add(new admin_setting_configselect('unoconvtimeout', new lang_string('unoconvtimeout', 'fileconverter_unoconv'),
+        new lang_string('unoconvtimeout_help', 'fileconverter_unoconv'), 1, $options));
+
 $url = new moodle_url('/files/converter/unoconv/testunoconv.php');
 $link = html_writer::link($url, get_string('test_unoconv', 'fileconverter_unoconv'));
 $settings->add(new admin_setting_heading('test_unoconv', '', $link));
