@@ -5,7 +5,7 @@ $OAuth_last_computed_siguature = false;
 
 /* Generic exception class
  */
-class OAuthException extends \Exception {
+class enrol_lti_OAuthException extends \Exception {
   // pass
 }
 
@@ -392,7 +392,7 @@ class OAuthRequest {
     foreach ($this->parameters as $k => $v) {
       if (substr($k, 0, 5) != "oauth") continue;
       if (is_array($v)) {
-        throw new OAuthException('Arrays not supported in headers');
+        throw new enrol_lti_OAuthException('Arrays not supported in headers');
       }
       $out .= ',' .
               OAuthUtil::urlencode_rfc3986($k) .
@@ -521,7 +521,7 @@ class OAuthServer {
       $version = 1.0;
     }
     if ($version && $version != $this->version) {
-      throw new OAuthException("OAuth version '$version' not supported");
+      throw new enrol_lti_OAuthException("OAuth version '$version' not supported");
     }
     return $version;
   }
@@ -537,7 +537,7 @@ class OAuthServer {
     }
     if (!in_array($signature_method,
                   array_keys($this->signature_methods))) {
-      throw new OAuthException(
+      throw new enrol_lti_OAuthException(
         "Signature method '$signature_method' not supported " .
         "try one of the following: " .
         implode(", ", array_keys($this->signature_methods))
@@ -552,12 +552,12 @@ class OAuthServer {
   private function get_consumer(&$request) {
     $consumer_key = @$request->get_parameter("oauth_consumer_key");
     if (!$consumer_key) {
-      throw new OAuthException("Invalid consumer key");
+      throw new enrol_lti_OAuthException("Invalid consumer key");
     }
 
     $consumer = $this->data_store->lookup_consumer($consumer_key);
     if (!$consumer) {
-      throw new OAuthException("Invalid consumer");
+      throw new enrol_lti_OAuthException("Invalid consumer");
     }
 
     return $consumer;
@@ -573,7 +573,7 @@ class OAuthServer {
       $consumer, $token_type, $token_field
     );
     if (!$token) {
-      throw new OAuthException("Invalid $token_type token: $token_field");
+      throw new enrol_lti_OAuthException("Invalid $token_type token: $token_field");
     }
     return $token;
   }
@@ -608,7 +608,7 @@ class OAuthServer {
       if ( $OAuth_last_computed_signature ) {
           $ex_text = $ex_text . " ours= $OAuth_last_computed_signature yours=$signature";
       }
-      throw new OAuthException($ex_text);
+      throw new enrol_lti_OAuthException($ex_text);
     }
   }
 
@@ -619,7 +619,7 @@ class OAuthServer {
     // verify that timestamp is recentish
     $now = time();
     if ($now - $timestamp > $this->timestamp_threshold) {
-      throw new OAuthException(
+      throw new enrol_lti_OAuthException(
         "Expired timestamp, yours $timestamp, ours $now"
       );
     }
@@ -637,7 +637,7 @@ class OAuthServer {
       $timestamp
     );
     if ($found) {
-      throw new OAuthException("Nonce already used: $nonce");
+      throw new enrol_lti_OAuthException("Nonce already used: $nonce");
     }
   }
 
